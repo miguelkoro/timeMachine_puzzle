@@ -4,7 +4,7 @@ import { use } from 'react';
 const AnimatedCard = (props) => {
   return(
     <div className={`flipCard ${props.animation}`} onClick={props.onClick} style={{backgroundColor: props.style.color, borderColor:props.style.borderColor, width:"100%"}}>
-      <span style={{color:"black",}}>{props.digit}</span>
+      <span style={{color:"black", fontSize: props.style.fontSize}}>{props.digit}</span>
     </div>
   )
 };
@@ -12,7 +12,7 @@ const AnimatedCard = (props) => {
 // function component
 const StaticCard = (props) => (
   <div style={{borderColor:props.borderColor, width:"100%"}} className={props.position}>
-    <span style={{color:"black", }}>{props.digit}</span>
+    <span style={{color:"black", fontSize: props.style?.fontSize}}>{props.digit}</span>
   </div>
 );
 
@@ -90,9 +90,9 @@ const Digit = (props) => {
 
   return (
     <div className="flipClock" onClick={handleIncrement} style={{ marginLeft: props.left, marginTop: props.style.top }}>
-        <div className={'flipUnitContainer'} style={{width: "auto", height: props.style.boxHeight, backgroundColor: props.style.color, borderColor: props.style.borderColor}}>
-        <StaticCard position={'upperCard'} digit={props.digit} borderColor={props.style.borderColor}/>
-        <StaticCard position={'lowerCard'} digit={previousDigit} borderColor={props.style.borderColor}/>
+        <div className={'flipUnitContainer'} style={{width: props.style.boxWidth, height: props.style.boxHeight, backgroundColor: props.style.color, borderColor: props.style.borderColor}}>
+        <StaticCard position={'upperCard'} digit={props.digit} borderColor={props.style.borderColor} style={props.style}/>
+        <StaticCard position={'lowerCard'} digit={previousDigit} borderColor={props.style.borderColor} style={props.style}/>
         <AnimatedCard digit={digit1} animation={animation1}  style={props.style}/>
         <AnimatedCard digit={digit2} animation={animation2} style={props.style}/>
         </div>
