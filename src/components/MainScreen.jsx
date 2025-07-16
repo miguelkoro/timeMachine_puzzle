@@ -191,7 +191,7 @@ const MainScreen = (props) => {
     color:("#d0c8c8"),
     borderColor:(""),
     boxHeight: "5vmin" ,
-    boxWidth:"3vw" ,
+    boxWidth:"auto" ,
     fontSize : "1.5rem"
   }
   
@@ -206,7 +206,7 @@ const MainScreen = (props) => {
     <div id="screen_main" className={"screen_content"} style={{ backgroundImage: backgroundChange ? 'url("' + appSettings.backgroundAfter + '")' : 'url("' + appSettings.backgroundBefore + '")' }}>
         <div className="lockContainer" style={{backgroundImage: 'url('+appSettings.backgroundTimeMachine+')', width: containerWidth, height: containerHeight, position: "relative"}}>
         
-          <div style={{position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", height: containerHeight*0.2, top: "15%", left: "25%", gap: "0.5vw"}}>
+          <div style={{position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", height: containerHeight*0.2, top: "15%", left: "25%", gap: "0.3vmin"}}>
               {/*<Ray boxHeight={boxHeight} boxWidth={boxWidth} checking={checking} 
                 frequency={frequencyMapped} amplitude={amplitudeMapped} wavelength={wavelengthMapped}/>*/}
 
