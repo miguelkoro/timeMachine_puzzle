@@ -6,6 +6,12 @@ export const DEFAULT_APP_SETTINGS = {
   backgroundBefore: "images/standard/background_before.png",
   backgroundAfter: "images/standard/background_after.png",
   backgroundTimeMachine : "images/standard/background_time_machine.png",
+  backgroundTimeMachineFull : "images/standard/background_time_machine_full.png",
+  switchImage: "images/standard/switch.png",
+  acbcBackground: "images/standard/acbc_background.png",
+
+  fullTimeMachine: true, // Para controlar si se muestra el fondo completo del Time Machine
+
   //backgroundDial: "images/standard/dial.png",
   //modeButton: "images/standard/mode_button.png",
   //backgroundNok: "images/standard/background_nok.png",
@@ -18,7 +24,6 @@ export const DEFAULT_APP_SETTINGS = {
   soundBeep: "sounds/beep.mp3",
   soundNok: "sounds/solution_nok.mp3",
   soundOk: "sounds/solution_ok.mp3",
-  soundDial: "sounds/spin.wav",
 
   soundAfterSolve: "sounds/after_solve.mp3",
 

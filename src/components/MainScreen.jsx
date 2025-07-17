@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { GlobalContext } from "./GlobalContext";
 import './../assets/scss/main.scss';
 import Digit from './Digit.jsx';
+import Electricity from './Electricity.jsx';
 
 const MainScreen = (props) => {
   const { escapp, appSettings, Utils, I18n } = useContext(GlobalContext);
@@ -37,8 +38,9 @@ const MainScreen = (props) => {
   const [second0, setSecond0] = useState(0);
   const [second1, setSecond1] = useState(0);
 
-
- 
+  // Estados para el carrusel de texto
+  const [textPosition, setTextPosition] = useState(0); // 0 = texto1 visible, 100 = texto2 visible
+  const [isAnimating, setIsAnimating] = useState(false);
 
 
   useEffect(() => {
@@ -115,6 +117,21 @@ const MainScreen = (props) => {
     setLightLeft(_lightLeft);
     setLightTop(_lightTop);
   }
+
+  // Funciones para el carrusel de texto
+  const moveTextUp = () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setTextPosition(0); // Muestra texto1
+    setTimeout(() => setIsAnimating(false), 500); // Duración de la animación
+  };
+
+  const moveTextDown = () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setTextPosition(100); // Muestra texto2
+    setTimeout(() => setIsAnimating(false), 500); // Duración de la animación
+  };
 
   const checkSolution = () => {
     if (processingSolution) {
@@ -194,6 +211,47 @@ const MainScreen = (props) => {
     boxWidth: containerWidth*0.035 + "px",
     fontSize : containerHeight*0.08 + "px"
   }
+  const monthStyle = {
+    top:("0%") ,
+    color:("#487a53"),
+    borderColor:("#37553e"),
+    boxHeight: containerHeight*0.07 + "px",
+    boxWidth: containerWidth*0.035 + "px",
+    fontSize : containerHeight*0.08 + "px"
+  }
+  const dayStyle = {
+    top:("-175%") ,
+    color:("#d4a274"),
+    borderColor:("#c7762a"),
+    boxHeight: containerHeight*0.07 + "px",
+    boxWidth: containerWidth*0.035 + "px",
+    fontSize : containerHeight*0.08 + "px"
+  }
+  const hourStyle = {
+    top:("-90%") ,
+    color:("#ae6a68"),
+    borderColor:("#893330"),
+    boxHeight: containerHeight*0.07 + "px",
+    boxWidth: containerWidth*0.035 + "px",
+    fontSize : containerHeight*0.08 + "px"
+  }
+  const minuteStyle = {
+    top:("-90%") ,
+    color:("#6eb0a9"),
+    borderColor:("#3d7975"),
+    boxHeight: containerHeight*0.07 + "px",
+    boxWidth: containerWidth*0.035 + "px",
+    fontSize : containerHeight*0.08 + "px"
+  }
+  const secondStyle = {
+    top:("-90%") ,
+    color:("#bb50d3"),
+    borderColor:("#5d2b68"),
+    boxHeight: containerHeight*0.07 + "px",
+    boxWidth: containerWidth*0.035 + "px",
+    fontSize : containerHeight*0.08 + "px"
+  }
+
   
 
   //Pone la imagen del fondo
@@ -204,20 +262,62 @@ const MainScreen = (props) => {
 
   return (
     <div id="screen_main" className={"screen_content"} style={{ backgroundImage: backgroundChange ? 'url("' + appSettings.backgroundAfter + '")' : 'url("' + appSettings.backgroundBefore + '")' }}>
-        <div className="lockContainer" style={{backgroundImage: 'url('+appSettings.backgroundTimeMachine+')', width: containerWidth, height: containerHeight, position: "relative"}}>
-        
-          <div style={{position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.2, height: containerHeight*0.1, top: containerHeight*0.2, left: containerWidth*0.24, gap: containerWidth*0.006 + "px"}}>
-              {/*<Ray boxHeight={boxHeight} boxWidth={boxWidth} checking={checking} 
-                frequency={frequencyMapped} amplitude={amplitudeMapped} wavelength={wavelengthMapped}/>*/}
-
-            {/*<FlipClock/>*/}
-            <Digit name={"year0"} checking={processingSolution} left={"0%"} style={yearStyle} digit={year0} setDigit={setYear0} max={9}/>
-            <Digit name={"year1"} checking={processingSolution} left={"0%"} style={yearStyle} digit={year1} setDigit={setYear1} max={9}/>
-            <Digit name={"year2"} checking={processingSolution} left={"0%"} style={yearStyle} digit={year2} setDigit={setYear2} max={9}/>            
-            <Digit name={"year3"} checking={processingSolution} left={"0%"}  style={yearStyle} digit={year3} setDigit={setYear3} max={9}/>
-            <Digit name={"year4"} checking={processingSolution} left={"0%"} style={yearStyle} digit={year4} setDigit={setYear4} max={9}/>
+        <div className="lockContainer" style={{backgroundImage: appSettings.fullTimeMachine ? 'url('+appSettings.backgroundTimeMachineFull+')' : 'url('+appSettings.backgroundTimeMachine+')', width: containerWidth, height: containerHeight, position: "relative"}}>  
+          {/*Year*/}     
+           <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.2, height: containerHeight*0.1, top: containerHeight*0.2, left: containerWidth*0.24, gap: containerWidth*0.006 + "px"}}>            
+            <Digit name={"year0"} checking={processingSolution} style={yearStyle} digit={year0} setDigit={setYear0} max={9}/>
+            <Digit name={"year1"} checking={processingSolution} style={yearStyle} digit={year1} setDigit={setYear1} max={9}/>
+            <Digit name={"year2"} checking={processingSolution} style={yearStyle} digit={year2} setDigit={setYear2} max={9}/>            
+            <Digit name={"year3"} checking={processingSolution} style={yearStyle} digit={year3} setDigit={setYear3} max={9}/>
+            <Digit name={"year4"} checking={processingSolution} style={yearStyle} digit={year4} setDigit={setYear4} max={9}/>
           </div>
+          <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.1, height: containerHeight*0.1, top: containerHeight*0.2, left: containerWidth*0.525, gap: containerWidth*0.006 + "px"}}>            
+            <Digit name={"month0"} checking={processingSolution}  style={monthStyle} digit={month0} setDigit={setMonth0} max={1}/>
+            <Digit name={"month1"} digit0={month0} checking={processingSolution} style={monthStyle} digit={month1} setDigit={setMonth1} max={9}/>
+          </div>
+          <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.1, height: containerHeight*0.1, top: containerHeight*0.2, left: containerWidth*0.678, gap: containerWidth*0.006 + "px"}}>            
+            <Digit name={"day0"} checking={processingSolution} style={dayStyle} digit={day0} setDigit={setDay0} max={3}/>
+            <Digit name={"day1"} digit0={day0}  checking={processingSolution}  style={dayStyle} digit={day1} setDigit={setDay1} max={9}/>
+          </div>
+          <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.1, height: containerHeight*0.1, top: containerHeight*0.3275, left: containerWidth*0.375, gap: containerWidth*0.006 + "px"}}>            
+            <Digit name={"hour0"} checking={processingSolution} style={hourStyle} digit={hour0} setDigit={setHour0} max={5}/>
+            <Digit name={"hour1"} checking={processingSolution} style={hourStyle} digit={hour1} setDigit={setHour1} max={9}/>
+          </div>
+          <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.1, height: containerHeight*0.1, top: containerHeight*0.3275, left: containerWidth*0.525, gap: containerWidth*0.006 + "px"}}>            
+            <Digit name={"minute0"} checking={processingSolution} style={minuteStyle} digit={minute0} setDigit={setMinute0} max={5}/>
+            <Digit name={"minute1"} checking={processingSolution} style={minuteStyle} digit={minute1} setDigit={setMinute1} max={9}/>
+          </div>
+          <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.1, height: containerHeight*0.1, top: containerHeight*0.3275, left: containerWidth*0.675, gap: containerWidth*0.006 + "px"}}>            
+            <Digit name={"second0"} checking={processingSolution}  style={secondStyle} digit={second0} setDigit={setSecond0} max={5}/>
+            <Digit name={"second1"} checking={processingSolution}  style={secondStyle} digit={second1} setDigit={setSecond1} max={9}/>
+          </div>
+          <div className='lockContainer' style={{position: "absolute",backgroundImage: `url(${appSettings.switchImage})`,  width: lightWidth, height: lightHeight,  top:"62%", cursor:"pointer"}}/>
+          <div className='lockContainer' style={{backgroundImage: `url(${appSettings.acbcBackground})`,  width: containerWidth*0.14, height: containerHeight*0.15,  top:"34.7%", left:"30.8%",}}>
+
         </div>
+
+      </div>
+        <div style={{position:"absolute"}}><Electricity 
+          width={containerWidth*0.8} 
+          height={containerHeight*0.6}
+          startPoint={{ x: containerWidth*0.1, y: containerHeight*0.1 }}
+          endPoint={{ x: containerWidth*0.1, y: containerHeight*0.5 }}
+          animationSpeed={150}
+          branches={3}
+          maxBranches={8}
+          branchLength={0.1}
+          multipleRays={true}
+          rayCount={2}
+          color="#ff0080"
+          strokeWidth={1.5}
+          segments={15}
+          glowEffect={true}
+          animated={true}
+          flickerIntensity={0.8}
+          intensity={0.9}
+        />
+        </div>
+        
 
       <audio id="audio_beep" src={appSettings.soundBeep} autostart="false" preload="auto" />
       <audio id="audio_failure" src={appSettings.soundNok} autostart="false" preload="auto" />
