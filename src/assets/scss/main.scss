@@ -306,3 +306,65 @@ div.retro div.boxLight {
     transform: rotateX(0deg);
   }
 }
+
+// Carrusel de texto
+.text-carousel {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-container {
+  position: relative;
+  width: 100%;
+  height: 200%;
+  transition: transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.text-container.show-first {
+  transform: translateY(0%);
+}
+
+.text-container.show-second {
+  transform: translateY(-50%);
+}
+
+.text-item {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  color: black;
+  font-weight: bold;
+  font-family: 'Roboto', sans-serif;
+  user-select: none;
+}
+
+.text-item:first-child {
+  top: 0%;
+}
+
+.text-item:last-child {
+  top: 50%;
+}
+
+// SVG hover effects
+.control-svg {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.control-svg:hover {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.control-svg:active {
+  transform: scale(0.95);
+}

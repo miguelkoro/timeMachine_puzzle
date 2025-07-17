@@ -271,6 +271,7 @@ const MainScreen = (props) => {
             <Digit name={"year3"} checking={processingSolution} style={yearStyle} digit={year3} setDigit={setYear3} max={9}/>
             <Digit name={"year4"} checking={processingSolution} style={yearStyle} digit={year4} setDigit={setYear4} max={9}/>
           </div>
+          <p style={{position:"absolute", left:"32%", top:"13.5%", color:"black", fontSize: containerHeight*0.03 + "px"}}>Year</p>
           <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.1, height: containerHeight*0.1, top: containerHeight*0.2, left: containerWidth*0.525, gap: containerWidth*0.006 + "px"}}>            
             <Digit name={"month0"} checking={processingSolution}  style={monthStyle} digit={month0} setDigit={setMonth0} max={1}/>
             <Digit name={"month1"} digit0={month0} checking={processingSolution} style={monthStyle} digit={month1} setDigit={setMonth1} max={9}/>
@@ -291,32 +292,94 @@ const MainScreen = (props) => {
             <Digit name={"second0"} checking={processingSolution}  style={secondStyle} digit={second0} setDigit={setSecond0} max={5}/>
             <Digit name={"second1"} checking={processingSolution}  style={secondStyle} digit={second1} setDigit={setSecond1} max={9}/>
           </div>
-          <div className='lockContainer' style={{position: "absolute",backgroundImage: `url(${appSettings.switchImage})`,  width: lightWidth, height: lightHeight,  top:"62%", cursor:"pointer"}}/>
-          <div className='lockContainer' style={{backgroundImage: `url(${appSettings.acbcBackground})`,  width: containerWidth*0.14, height: containerHeight*0.15,  top:"34.7%", left:"30.8%",}}>
+          <div className='lockContainer' style={{position: "absolute", backgroundImage: `url(${appSettings.switchImage})`, width: lightWidth, height: lightHeight, top: "62%", cursor: "pointer"}}/>
+          
+          {/* Div blanco de fondo con carrusel de texto CSS */}
+          <div style={{zIndex: 1, position: "absolute", width: containerWidth*0.09, height: containerHeight*0.045, top:"35%", left: "22.9%", backgroundColor: "rgba(255, 255, 255, 1)"}}>
+            <div className="text-carousel">
+              <div className={`text-container ${textPosition === 0 ? 'show-first' : 'show-second'}`}>
+                <div className="text-item" style={{fontSize: containerHeight*0.05 + "px", paddingTop: "60%"}}>
+                  a.c
+                </div>
+                <div className="text-item" style={{fontSize: containerHeight*0.05 + "px", paddingTop: "62%"}}>
+                  b.c
+                </div>
+              </div>
+            </div>
+          </div>          
+          {/* Div con imagen encima */}
+          <div className='lockContainer' style={{zIndex: 2, position: "absolute", backgroundImage: `url(${appSettings.acbcBackground})`, width: containerWidth*0.14, height: containerHeight*0.15, top: "31%", left: "20.4%"}}>
+          </div> 
+          <svg onClick={moveTextUp} className="control-svg" style={{zIndex: 3, position: "absolute", left: containerWidth*0.24, top: containerHeight*0.405}} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M440-320h80v-168l64 64 56-56-160-160-160 160 56 56 64-64v168Zm40 240q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+          <svg onClick={moveTextDown} className="control-svg" style={{zIndex: 3, position: "absolute", left: containerWidth*0.28, top: containerHeight*0.405}} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m480-320 160-160-56-56-64 64v-168h-80v168l-64-64-56 56 160 160Zm0 240q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
 
+          <div style={{zIndex:1,position:"absolute", left:containerWidth*0.35, top:containerHeight*0.51}}>
+            <Electricity 
+              width={containerWidth*0.15} 
+              height={containerHeight*0.2}
+              startPoint={{ x: (containerWidth*0.15)/2, y: containerHeight*0.01 }}
+              endPoint={{ x: (containerWidth*0.15)/2, y: containerHeight*0.1 }}
+              animationSpeed={100}
+              branches={2}
+              maxBranches={8}
+              branchLength={0.1}
+              multipleRays={true}
+              rayCount={2}
+              color="#ff0080"
+              strokeWidth={1.2}
+              segments={15}
+              glowEffect={true}
+              animated={true}
+              flickerIntensity={0.8}
+              intensity={0.9}
+            />
+          </div>
+          <div style={{zIndex:1,position:"absolute", left:containerWidth*0.425, top:containerHeight*0.51}}>
+            <Electricity 
+              width={containerWidth*0.15} 
+              height={containerHeight*0.2}
+              startPoint={{ x: (containerWidth*0.15)/2, y: containerHeight*0.01 }}
+              endPoint={{ x: (containerWidth*0.15)/2, y: containerHeight*0.1 }}
+              animationSpeed={100}
+              branches={2}
+              maxBranches={8}
+              branchLength={0.1}
+              multipleRays={true}
+              rayCount={2}
+              color="#00e600ff"
+              strokeWidth={1.2}
+              segments={15}
+              glowEffect={true}
+              animated={true}
+              flickerIntensity={0.8}
+              intensity={0.9}
+            />
+          </div>
+          <div style={{zIndex:1,position:"absolute", left:containerWidth*0.50, top:containerHeight*0.51}}>
+            <Electricity 
+              width={containerWidth*0.15} 
+              height={containerHeight*0.2}
+              startPoint={{ x: (containerWidth*0.15)/2, y: containerHeight*0.01 }}
+              endPoint={{ x: (containerWidth*0.15)/2, y: containerHeight*0.1 }}
+              animationSpeed={100}
+              branches={2}
+              maxBranches={8}
+              branchLength={0.1}
+              multipleRays={true}
+              rayCount={2}
+              color="#ffdc9cff"
+              strokeWidth={1.2}
+              segments={15}
+              glowEffect={true}
+              animated={true}
+              flickerIntensity={0.8}
+              intensity={0.9}
+            />
+         
         </div>
 
       </div>
-        <div style={{position:"absolute"}}><Electricity 
-          width={containerWidth*0.8} 
-          height={containerHeight*0.6}
-          startPoint={{ x: containerWidth*0.1, y: containerHeight*0.1 }}
-          endPoint={{ x: containerWidth*0.1, y: containerHeight*0.5 }}
-          animationSpeed={150}
-          branches={3}
-          maxBranches={8}
-          branchLength={0.1}
-          multipleRays={true}
-          rayCount={2}
-          color="#ff0080"
-          strokeWidth={1.5}
-          segments={15}
-          glowEffect={true}
-          animated={true}
-          flickerIntensity={0.8}
-          intensity={0.9}
-        />
-        </div>
+        
         
 
       <audio id="audio_beep" src={appSettings.soundBeep} autostart="false" preload="auto" />
