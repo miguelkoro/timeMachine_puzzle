@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap');
 
 // Variables
 $easeInOut: cubic-bezier(0.455, 0.03, 0.515, 0.955);
@@ -128,6 +127,43 @@ div.retro div.boxLight {
 	//cursor: pointer;
 }
 
+.buttonContainer{
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	position: absolute;
+	cursor: pointer;
+	transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.buttonContainer:hover {
+  //transform: translateY(-0.5vmin);
+  transform: scale(1.05);
+  filter: brightness(1.3);
+}
+.buttonContainer:disabled {
+  //transform: translateY(1.1vmin);
+  filter: brightness(0.5);
+}
+
+.switchContainer{
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	position: absolute;
+	transition: transform 0.2s ease;
+	//cursor: pointer;
+}
+.switchContainer:hover {
+  //transform: scale(1.05);
+  transform: translateY(-0.5vmin);
+  filter: brightness(1.3);
+}
+.switchContainer:active {
+  transform: translateY(1.1vmin);
+  filter: brightness(1);
+}
+
 .screenContainer{
 	background-position: center;
 	background-repeat: no-repeat;
@@ -146,7 +182,14 @@ div.retro div.boxLight {
   justify-content: space-between;
   width: calc(3 * 2rem);*/
   cursor: 'pointer';
+  transition: transform 0.2s ease, filter 0.2s ease;
   display: flex;
+}
+.flipClock:hover {
+ 
+  //transform: translateY(-1vmin);
+  transform: scale(1.02);
+  filter: brightness(1.2);
 }
 
 .flipUnitContainer {
@@ -367,4 +410,12 @@ div.retro div.boxLight {
 
 .control-svg:active {
   transform: scale(0.95);
+}
+
+.tittle-text {
+  font-size: 2.5vmin;
+  color: black;
+  font-family: 'Winky Rough', sans-serif;
+  text-align: center;
+  pointer-events: none;
 }

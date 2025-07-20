@@ -3,10 +3,12 @@ import { GlobalContext } from "./GlobalContext";
 import './../assets/scss/main.scss';
 import Digit from './Digit.jsx';
 import Electricity from './Electricity.jsx';
+import Ray from './Ray.jsx';
 
 const MainScreen = (props) => {
   const { escapp, appSettings, Utils, I18n } = useContext(GlobalContext);
   const [processingSolution, setProcessingSolution] = useState(false);
+  const [isReset, setIsReset] = useState(false);
 
   const[backgroundChange, setBackgroundChange] = useState(false);
 
@@ -21,6 +23,16 @@ const MainScreen = (props) => {
   const [lightHeight, setLightHeight] = useState(0); //
   const [lightLeft, setLightLeft] = useState(0);//
   const [lightTop, setLightTop] = useState(0);//
+
+  const mapRange = (value, min1, max1, min2, max2) => {
+    return min2 + ((value - min1) * (max2 - min2)) / (max1 - min1);
+  };
+  const [frequency, setFrequency] = useState(0);
+  const [wavelength, setWavelength] = useState(0);
+  const [amplitude, setAmplitude] = useState(0);
+  const frequencyMapped = mapRange(frequency/3, 0, 119, appSettings.minFrequency, appSettings.maxFrequency); // Frecuencia entre 0.6 y 4.2
+  const wavelengthMapped = mapRange(wavelength/3, 0, 119, appSettings.minWavelength, appSettings.maxWavelength); // Wavelength entre 10 y 80
+  const amplitudeMapped = mapRange(amplitude/3, 0, 119, appSettings.minAmplitude, appSettings.maxAmplitude); // Amplitud entre 25 y 80
 
   const [year0, setYear0] = useState(0);
   const [year1, setYear1] = useState(0);
@@ -59,8 +71,8 @@ const MainScreen = (props) => {
     let _lockWidth = Math.min(props.appHeight * aspectRatio, props.appWidth) ;
     let _lockHeight = _lockWidth / aspectRatio;
 
-    let _containerWidth = _lockWidth *0.8;
-    let _containerHeight = _lockHeight *0.8;
+    let _containerWidth = _lockWidth *0.9;
+    let _containerHeight = _lockHeight *0.9;
 
 
     let _containerMarginLeft=0.03 * _lockWidth;
@@ -98,10 +110,10 @@ const MainScreen = (props) => {
 
         break;
       default:
-        _lightWidth = _lockWidth * 0.08;
-        _lightHeight = _lockHeight * 0.08;
-        _lightLeft =  _lockWidth  * 0.61;
-        _lightTop =  _lockHeight  * 0.03
+        _lightWidth = _lockWidth * 0.11;
+        _lightHeight = _lockHeight * 0.11;
+        //_lightLeft =  _lockWidth  * 0.61;
+        //_lightTop =  _lockHeight  * 0.03
     }
 
     setContainerWidth(_containerWidth);
@@ -138,12 +150,18 @@ const MainScreen = (props) => {
       return;
     }
 
-    let audio = document.getElementById("audio_beep");
+    let audio = document.getElementById("audio_switch");
     audio.currentTime = 0; // Reinicia el audio
     audio.play();
 
     setProcessingSolution(true);
-   
+    let year = toString(year0) + toString(year1) + toString(year2 ) + toString(year3) + toString(year4);
+    let month = toString(month0) + toString(month1);
+    let day = toString(day0) + toString(day1);
+    let hour = toString(hour0) + toString(hour1);
+    let minute = toString(minute0) + toString(minute1);
+    let second = toString(second0) + toString(second1);
+    let solution = [year, month, day, hour, minute, second].join(";");
     escapp.checkNextPuzzle(solution, {}, (success, erState) => {
           Utils.log("Check solution Escapp response", success, erState);
           try {
@@ -163,7 +181,6 @@ const MainScreen = (props) => {
     if (success) {
       audio = document.getElementById("audio_success");
       setLight("ok");
-      setAudioAmplitude(amplitudeMapped); // Actualiza la amplitud del audio para la visualización
     } else {
       audio = document.getElementById("audio_failure");
       setLight("nok");
@@ -175,32 +192,18 @@ const MainScreen = (props) => {
         setLight("off");
         setProcessingSolution(false);
       }else{
-        
-        if(appSettings.actionAfterSolve === "PLAY_SOUND"){
-          //playFrequency(frequencyMapped); // Reproduce el sonido de la frecuencia
-          audio = document.getElementById("audio_post_success");
-          //handlePlayAudioAndVisual();
-          
-          audio.play();
-          visualizeAudio(audio);
-          /*setTimeout(() => {
-            props.onKeypadSolved(solution); //Cambiar
-            Utils.log("Puzzle solved, sending solution");
-            
-          }, appSettings.timeSoundAfterSolve); */
-          audio.onended = () => {
-            props.onKeypadSolved(solution);
-          }
-          
-        }else{
-          props.onKeypadSolved(solution); //Cambiar
-          
-        }
+          props.onKeypadSolved(solution); //Cambiar          
       }
     }, afterChangeBoxLightDelay);
-    
-    //!success ? audio.play() : playFrequency(frequencyMapped); // Reproduce el sonido de la frecuencia
     audio.play();
+  }
+
+  const reset = () => {
+    setIsReset(true);
+    setTimeout(() => {
+      setIsReset(false);
+      setProcessingSolution(false);
+    }, 3000);
   }
 
   const yearStyle = {
@@ -252,6 +255,12 @@ const MainScreen = (props) => {
     fontSize : containerHeight*0.08 + "px"
   }
 
+  const digitOnClick = () => {
+    let audio = document.getElementById("audio_flip");
+    audio.currentTime = 0; // Reinicia el audio
+    audio.play();
+  };
+
   
 
   //Pone la imagen del fondo
@@ -262,130 +271,112 @@ const MainScreen = (props) => {
 
   return (
     <div id="screen_main" className={"screen_content"} style={{ backgroundImage: backgroundChange ? 'url("' + appSettings.backgroundAfter + '")' : 'url("' + appSettings.backgroundBefore + '")' }}>
-        <div className="lockContainer" style={{backgroundImage: appSettings.fullTimeMachine ? 'url('+appSettings.backgroundTimeMachineFull+')' : 'url('+appSettings.backgroundTimeMachine+')', width: containerWidth, height: containerHeight, position: "relative"}}>  
+      <div className='lockContainer' style={{zIndex: 1, position: "absolute", backgroundImage: `url(${appSettings.backgroundRay})`, width: containerWidth*0.2, height: containerHeight*0.2, top: "49.7%", left: "27.3%"}}/>     
+        <div className="lockContainer" style={{zIndex:2,backgroundImage: appSettings.fullTimeMachine ? 'url('+appSettings.backgroundTimeMachineFull+')' : 'url('+appSettings.backgroundTimeMachine+')', width: containerWidth, height: containerHeight, position: "relative"}}>  
           {/*Year*/}     
            <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.2, height: containerHeight*0.1, top: containerHeight*0.2, left: containerWidth*0.24, gap: containerWidth*0.006 + "px"}}>            
-            <Digit name={"year0"} checking={processingSolution} style={yearStyle} digit={year0} setDigit={setYear0} max={9}/>
-            <Digit name={"year1"} checking={processingSolution} style={yearStyle} digit={year1} setDigit={setYear1} max={9}/>
-            <Digit name={"year2"} checking={processingSolution} style={yearStyle} digit={year2} setDigit={setYear2} max={9}/>            
-            <Digit name={"year3"} checking={processingSolution} style={yearStyle} digit={year3} setDigit={setYear3} max={9}/>
-            <Digit name={"year4"} checking={processingSolution} style={yearStyle} digit={year4} setDigit={setYear4} max={9}/>
+            <Digit name={"year0"} checking={processingSolution} style={yearStyle} digit={year0} setDigit={setYear0} max={9} digitOnClick={digitOnClick} isReset={isReset} />
+            <Digit name={"year1"} checking={processingSolution} style={yearStyle} digit={year1} setDigit={setYear1} max={9} digitOnClick={digitOnClick} isReset={isReset} />
+            <Digit name={"year2"} checking={processingSolution} style={yearStyle} digit={year2} setDigit={setYear2} max={9} digitOnClick={digitOnClick} isReset={isReset} />
+            <Digit name={"year3"} checking={processingSolution} style={yearStyle} digit={year3} setDigit={setYear3} max={9} digitOnClick={digitOnClick} isReset={isReset} />
+            <Digit name={"year4"} checking={processingSolution} style={yearStyle} digit={year4} setDigit={setYear4} max={9} digitOnClick={digitOnClick} isReset={isReset} />
           </div>
-          <p style={{position:"absolute", left:"32%", top:"13.5%", color:"black", fontSize: containerHeight*0.03 + "px"}}>Year</p>
+          <p className="tittle-text" style={{position:"absolute", left:"33.2%", top:"13.2%", color:"black", fontSize: containerHeight*0.03 + "px", textAlign:"center", transform: "translateX(-50%)"}}>{I18n.getTrans("i.year")}</p>
           <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.1, height: containerHeight*0.1, top: containerHeight*0.2, left: containerWidth*0.525, gap: containerWidth*0.006 + "px"}}>            
-            <Digit name={"month0"} checking={processingSolution}  style={monthStyle} digit={month0} setDigit={setMonth0} max={1}/>
-            <Digit name={"month1"} digit0={month0} checking={processingSolution} style={monthStyle} digit={month1} setDigit={setMonth1} max={9}/>
+            <Digit name={"month0"} checking={processingSolution}  style={monthStyle} digit={month0} setDigit={setMonth0} max={1} digitOnClick={digitOnClick} isReset={isReset} />
+            <Digit name={"month1"} digit0={month0} checking={processingSolution} style={monthStyle} digit={month1} setDigit={setMonth1} max={9} digitOnClick={digitOnClick} isReset={isReset} />
           </div>
+          <p className="tittle-text" style={{position:"absolute", left:"57.5%", top:"13.2%", color:"black", fontSize: containerHeight*0.03 + "px", textAlign:"center", transform: "translateX(-50%)"}}>{I18n.getTrans("i.month")}</p>
           <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.1, height: containerHeight*0.1, top: containerHeight*0.2, left: containerWidth*0.678, gap: containerWidth*0.006 + "px"}}>            
-            <Digit name={"day0"} checking={processingSolution} style={dayStyle} digit={day0} setDigit={setDay0} max={3}/>
-            <Digit name={"day1"} digit0={day0}  checking={processingSolution}  style={dayStyle} digit={day1} setDigit={setDay1} max={9}/>
+            <Digit name={"day0"} checking={processingSolution} style={dayStyle} digit={day0} setDigit={setDay0} max={3} digitOnClick={digitOnClick} isReset={isReset} />
+            <Digit name={"day1"} digit0={day0}  checking={processingSolution}  style={dayStyle} digit={day1} setDigit={setDay1} max={9} digitOnClick={digitOnClick} isReset={isReset} />
           </div>
+          <p className="tittle-text" style={{position:"absolute", left:"72.5%", top:"13.2%", color:"black", fontSize: containerHeight*0.03 + "px", textAlign:"center", transform: "translateX(-50%)"}}>{I18n.getTrans("i.day")}</p>
+          <div className='lockContainer' style={{zIndex: 2, position: "absolute", backgroundImage: `url(${appSettings.backgroundHour})`, width: containerWidth*0.15, height: containerHeight*0.15, top: "31.9%", left: "34.9%"}}/>
           <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.1, height: containerHeight*0.1, top: containerHeight*0.3275, left: containerWidth*0.375, gap: containerWidth*0.006 + "px"}}>            
-            <Digit name={"hour0"} checking={processingSolution} style={hourStyle} digit={hour0} setDigit={setHour0} max={5}/>
-            <Digit name={"hour1"} checking={processingSolution} style={hourStyle} digit={hour1} setDigit={setHour1} max={9}/>
+            <Digit name={"hour0"} checking={processingSolution} style={hourStyle} digit={hour0} setDigit={setHour0} max={5} digitOnClick={digitOnClick} isReset={isReset} />
+            <Digit name={"hour1"} checking={processingSolution} style={hourStyle} digit={hour1} setDigit={setHour1} max={9} digitOnClick={digitOnClick} isReset={isReset} />
           </div>
+          <p className="tittle-text" style={{zIndex:3,position:"absolute", left:"42.4%", top:"39.7%", color:"black", fontSize: containerHeight*0.03 + "px", textAlign:"center", transform: "translateX(-50%)"}}>{I18n.getTrans("i.hour")}</p>
+          <div className='lockContainer' style={{zIndex: 2, position: "absolute", backgroundImage: `url(${appSettings.backgroundMinute})`, width: containerWidth*0.15, height: containerHeight*0.15, top: "32%", left: "50%"}}/>
           <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.1, height: containerHeight*0.1, top: containerHeight*0.3275, left: containerWidth*0.525, gap: containerWidth*0.006 + "px"}}>            
-            <Digit name={"minute0"} checking={processingSolution} style={minuteStyle} digit={minute0} setDigit={setMinute0} max={5}/>
-            <Digit name={"minute1"} checking={processingSolution} style={minuteStyle} digit={minute1} setDigit={setMinute1} max={9}/>
+            <Digit name={"minute0"} checking={processingSolution} style={minuteStyle} digit={minute0} setDigit={setMinute0} max={5} digitOnClick={digitOnClick} isReset={isReset}/>
+            <Digit name={"minute1"} checking={processingSolution} style={minuteStyle} digit={minute1} setDigit={setMinute1} max={9} digitOnClick={digitOnClick} isReset={isReset}/>
           </div>
+          <p className="tittle-text" style={{zIndex:3,position:"absolute", left:"57.4%", top:"39.7%", color:"black", fontSize: containerHeight*0.03 + "px", textAlign:"center", transform: "translateX(-50%)"}}>{I18n.getTrans("i.minute")}</p>
+          <div className='lockContainer' style={{zIndex: 2, position: "absolute", backgroundImage: `url(${appSettings.backgroundSecond})`, width: containerWidth*0.15, height: containerHeight*0.15, top: "32.1%", left: "64.9%"}}/>
           <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.1, height: containerHeight*0.1, top: containerHeight*0.3275, left: containerWidth*0.675, gap: containerWidth*0.006 + "px"}}>            
-            <Digit name={"second0"} checking={processingSolution}  style={secondStyle} digit={second0} setDigit={setSecond0} max={5}/>
-            <Digit name={"second1"} checking={processingSolution}  style={secondStyle} digit={second1} setDigit={setSecond1} max={9}/>
+            <Digit name={"second0"} checking={processingSolution}  style={secondStyle} digit={second0} setDigit={setSecond0} max={5} digitOnClick={digitOnClick} isReset={isReset} />
+            <Digit name={"second1"} checking={processingSolution}  style={secondStyle} digit={second1} setDigit={setSecond1} max={9} digitOnClick={digitOnClick} isReset={isReset} />
           </div>
-          <div className='lockContainer' style={{position: "absolute", backgroundImage: `url(${appSettings.switchImage})`, width: lightWidth, height: lightHeight, top: "62%", cursor: "pointer"}}/>
+          <p className="tittle-text" style={{zIndex:3,position:"absolute", left:"72.4%", top:"39.5%", color:"black", fontSize: containerHeight*0.03 + "px", textAlign:"center", transform: "translateX(-50%)"}}>{I18n.getTrans("i.second")}</p>
+          <div className='switchContainer' onClick={checkSolution} style={{zIndex:5,position: "absolute", backgroundImage: `url(${appSettings.switchImage})`, width: lightWidth, height: lightHeight, top: "63%", left:"43.9%", cursor: "pointer"}}/>
           
-          {/* Div blanco de fondo con carrusel de texto CSS */}
-          <div style={{zIndex: 1, position: "absolute", width: containerWidth*0.09, height: containerHeight*0.045, top:"35%", left: "22.9%", backgroundColor: "rgba(255, 255, 255, 1)"}}>
+          {/* AC BC */}
+          <div style={{zIndex: 2, position: "absolute", width: containerWidth*0.09, height: containerHeight*0.045, top:"33.9%", left: "22.9%", backgroundColor: "#f0d0a2"}}>
             <div className="text-carousel">
               <div className={`text-container ${textPosition === 0 ? 'show-first' : 'show-second'}`}>
-                <div className="text-item" style={{fontSize: containerHeight*0.05 + "px", paddingTop: "60%"}}>
-                  a.c
-                </div>
-                <div className="text-item" style={{fontSize: containerHeight*0.05 + "px", paddingTop: "62%"}}>
-                  b.c
-                </div>
+                <div className="text-item" style={{fontSize: containerHeight*0.05 + "px", paddingTop: "60%"}}>a.c</div>
+                <div className="text-item" style={{fontSize: containerHeight*0.05 + "px", paddingTop: "62%"}}>b.c</div>
               </div>
             </div>
           </div>          
-          {/* Div con imagen encima */}
-          <div className='lockContainer' style={{zIndex: 2, position: "absolute", backgroundImage: `url(${appSettings.acbcBackground})`, width: containerWidth*0.14, height: containerHeight*0.15, top: "31%", left: "20.4%"}}>
-          </div> 
-          <svg onClick={moveTextUp} className="control-svg" style={{zIndex: 3, position: "absolute", left: containerWidth*0.24, top: containerHeight*0.405}} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M440-320h80v-168l64 64 56-56-160-160-160 160 56 56 64-64v168Zm40 240q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
-          <svg onClick={moveTextDown} className="control-svg" style={{zIndex: 3, position: "absolute", left: containerWidth*0.28, top: containerHeight*0.405}} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="m480-320 160-160-56-56-64 64v-168h-80v168l-64-64-56 56 160 160Zm0 240q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+          {/* Botones AC BC */}
+          <div className='lockContainer' style={{zIndex: 2, position: "absolute", backgroundImage: `url(${appSettings.acbcBackground})`, width: containerWidth*0.15, height: containerHeight*0.15, top: "31.5%", left: "20.4%"}}/>
+          <div className='buttonContainer' onClick={moveTextUp} style={{display: "flex", alignItems:"center", justifyContent:"center", zIndex: 2, position: "absolute", backgroundImage: `url(${appSettings.buttonBackground})`, width: containerWidth*0.05, height: containerHeight*0.05, top: "39.7%", left: "22.8%"}}>
+            <svg xmlns="http://www.w3.org/2000/svg" height="5vmin" viewBox="0 -960 960 960" width="5vmin" fill="#FFFFFF"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
+          </div>
+          <div className='buttonContainer' onClick={moveTextDown} style={{display: "flex", alignItems:"center", justifyContent:"center", zIndex: 2, position: "absolute", backgroundImage: `url(${appSettings.buttonBackground})`, width: containerWidth*0.05, height: containerHeight*0.05, top: "39.7%", left: "27.6%"}}>
+            <svg xmlns="http://www.w3.org/2000/svg" height="5vmin" viewBox="0 -960 960 960" width="5vmin" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+          </div>
+          
+          <div style={{zIndex: 3, position: "absolute", left: containerWidth*0.208, top: containerHeight*0.545, width: containerWidth*0.17, height: containerHeight*0.14}}>
+            <Ray boxHeight={containerHeight*0.45} boxWidth={containerWidth*0.255} checking={processingSolution} waveType={"sine"}
+              frequency={frequencyMapped} amplitude={amplitudeMapped} wavelength={wavelengthMapped}/>
+          </div>
+        
 
           <div style={{zIndex:1,position:"absolute", left:containerWidth*0.35, top:containerHeight*0.51}}>
-            <Electricity 
-              width={containerWidth*0.15} 
-              height={containerHeight*0.2}
+            <Electricity width={containerWidth*0.15} height={containerHeight*0.2}
               startPoint={{ x: (containerWidth*0.15)/2, y: containerHeight*0.01 }}
               endPoint={{ x: (containerWidth*0.15)/2, y: containerHeight*0.1 }}
-              animationSpeed={100}
-              branches={2}
-              maxBranches={8}
-              branchLength={0.1}
-              multipleRays={true}
-              rayCount={2}
-              color="#ff0080"
-              strokeWidth={1.2}
-              segments={15}
-              glowEffect={true}
-              animated={true}
-              flickerIntensity={0.8}
-              intensity={0.9}
-            />
+              animationSpeed={100}  branches={2} maxBranches={8}branchLength={0.1}
+              multipleRays={true} rayCount={2} color="#ff0080"strokeWidth={1.2} segments={15}
+              glowEffect={true} animated={true} flickerIntensity={0.8}intensity={0.9}/>
           </div>
           <div style={{zIndex:1,position:"absolute", left:containerWidth*0.425, top:containerHeight*0.51}}>
-            <Electricity 
-              width={containerWidth*0.15} 
-              height={containerHeight*0.2}
+            <Electricity width={containerWidth*0.15} height={containerHeight*0.2}
               startPoint={{ x: (containerWidth*0.15)/2, y: containerHeight*0.01 }}
               endPoint={{ x: (containerWidth*0.15)/2, y: containerHeight*0.1 }}
-              animationSpeed={100}
-              branches={2}
-              maxBranches={8}
-              branchLength={0.1}
-              multipleRays={true}
-              rayCount={2}
-              color="#00e600ff"
-              strokeWidth={1.2}
-              segments={15}
-              glowEffect={true}
-              animated={true}
-              flickerIntensity={0.8}
-              intensity={0.9}
-            />
+              animationSpeed={100} branches={2} maxBranches={8} branchLength={0.1}
+              multipleRays={true} rayCount={2} color="#00e600ff" strokeWidth={1.2}
+              segments={15} glowEffect={true} animated={true} flickerIntensity={0.8} intensity={0.9} />
           </div>
           <div style={{zIndex:1,position:"absolute", left:containerWidth*0.50, top:containerHeight*0.51}}>
-            <Electricity 
-              width={containerWidth*0.15} 
-              height={containerHeight*0.2}
+            <Electricity width={containerWidth*0.15} height={containerHeight*0.2}
               startPoint={{ x: (containerWidth*0.15)/2, y: containerHeight*0.01 }}
               endPoint={{ x: (containerWidth*0.15)/2, y: containerHeight*0.1 }}
-              animationSpeed={100}
-              branches={2}
-              maxBranches={8}
-              branchLength={0.1}
-              multipleRays={true}
-              rayCount={2}
-              color="#ffdc9cff"
-              strokeWidth={1.2}
-              segments={15}
-              glowEffect={true}
-              animated={true}
-              flickerIntensity={0.8}
-              intensity={0.9}
-            />
-         
-        </div>
-
+              animationSpeed={100} branches={2} maxBranches={8} branchLength={0.1}
+              multipleRays={true} rayCount={2} color="#ffdc9cff"strokeWidth={1.2}
+              segments={15} glowEffect={true} animated={true} flickerIntensity={0.8} intensity={0.9} />         
+          </div>
+          <div style={{zIndex:1,position:"absolute", left:containerWidth*0.585, top:containerHeight*0.51}}>
+            <Electricity width={containerWidth*0.15} height={containerHeight*0.2}
+              startPoint={{ x: (containerWidth*0.15)/2, y: containerHeight*0.01 }}
+              endPoint={{ x: (containerWidth*0.15)/2, y: containerHeight*0.1 }}
+              animationSpeed={100} branches={2} maxBranches={8} branchLength={0.1}
+              multipleRays={true} rayCount={2} color="#078fffff" strokeWidth={1.2}
+              segments={15} glowEffect={true} animated={true} flickerIntensity={0.8} intensity={0.9} />         
+          </div>
+  
       </div>
         
         
 
-      <audio id="audio_beep" src={appSettings.soundBeep} autostart="false" preload="auto" />
+      <audio id="audio_flip" src={appSettings.soundFlip} autostart="false" preload="auto" />
       <audio id="audio_failure" src={appSettings.soundNok} autostart="false" preload="auto" />
       <audio id="audio_success" src={appSettings.soundOk} autostart="false" preload="auto" />
-      <audio id="audio_post_success" src={appSettings.soundAfterSolve} autostart="false" preload="auto" />
+      <audio id="audio_switch" src={appSettings.soundSwitch} autostart="false" preload="auto" />
 
  
     </div>);

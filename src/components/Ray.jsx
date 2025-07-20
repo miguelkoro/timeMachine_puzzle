@@ -67,7 +67,7 @@ const Ray = (props) => {
         canvas.height = height;
         ctx.clearRect(0, 0, width, height);
         drawWave(ctx, width, height);
-        offsetRef.current += 1;
+        offsetRef.current += 0.5;
         animationRef.current = requestAnimationFrame(draw);
     };
 

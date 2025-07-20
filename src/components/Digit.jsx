@@ -24,35 +24,43 @@ const Digit = (props) => {
         else max=props.max;
     
     const handleIncrement = () => {
-                if(props.name==='month1' &&  props.digit0=== 1) max = 2
+        props.digitOnClick();
+
+        if(props.name==='month1' &&  props.digit0=== 1) max = 2
         else if(props.name==='day1' && props.digit0=== 3) max = 1
         else max=props.max;
         setTimeout(() => {
             props.setDigit(prev => (prev + 1) > max ? 0 : prev + 1);
             setShuffle(prev => !prev);
         }, 100); 
-        //console.log('Incremented hours to:', props.digit + 1);
-
     };
-    // assign digit values
-    let previousDigit ;//= props.digit===0 ? max : props.digit - 1;
+
+    let previousDigit ;
     previousDigit= props.digit===0 ? max : props.digit - 1;
     
+    useEffect(() => {
+      if(props.digit === 0 || !props.isReset) return;
+      incrementDigit();
+      props.digitOnClick();
+    }, [props.isReset]);
+
+    const incrementDigit = () => {
+      setTimeout(() => {
+          props.setDigit(0);
+          setShuffle(prev => !prev);
+      }, 100);
+    }
 
     useEffect(() => {
-          if (props.name === 'month1' && props.digit0 === 1 && props.digit > 2) {
-    // Si el dígito actual es mayor que 2, animar y poner a 0
-
-    setTimeout(() => {
-      setShuffle(prev => !prev); // activa animación
-      //setTimeout(() => {
-        props.setDigit(0);
-      }, 200); // espera un poco para que se vea el flip antes de poner a 0*/
-    //}
-  }
-        else if(props.name==='day1' && props.digit0=== 3 && props.digit>1){
-            handleIncrement();
-        }
+      if (props.name === 'month1' && props.digit0 === 1 && props.digit > 2) {
+        setTimeout(() => {
+          setShuffle(prev => !prev); // activa animación
+            props.setDigit(0);
+          }, 200); 
+      }else if(props.name==='day1' && props.digit0=== 3 && props.digit>1){
+          handleIncrement();
+      }
+      
     }, [props.digit0]);
 
 
@@ -66,7 +74,7 @@ const Digit = (props) => {
     
 
   return (
-    <div className="flipClock" onClick={handleIncrement} style={{ }}>
+    <div className="flipClock" onClick={handleIncrement} >
         <div className={'flipUnitContainer'} style={{width: props.style.boxWidth, height: props.style.boxHeight, backgroundColor: props.style.color, borderColor: props.style.borderColor}}>
         <StaticCard position={'upperCard'} digit={props.digit} borderColor={props.style.borderColor} style={props.style}/>
         <StaticCard position={'lowerCard'} digit={previousDigit} borderColor={props.style.borderColor} style={props.style}/>

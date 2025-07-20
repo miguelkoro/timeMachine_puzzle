@@ -5,12 +5,16 @@ export const DEFAULT_APP_SETTINGS = {
   keysType: "NUMBERS",
   backgroundBefore: "images/standard/background_before.png",
   backgroundAfter: "images/standard/background_after.png",
-  backgroundTimeMachine : "images/standard/background_time_machine.png",
+  backgroundTimeMachine : "images/standard/background_time_machine_new.png",
   backgroundTimeMachineFull : "images/standard/background_time_machine_full.png",
   switchImage: "images/standard/switch.png",
+  buttonBackground: "images/standard/button_background.png",
   acbcBackground: "images/standard/acbc_background.png",
+  backgroundHour: "images/standard/background_hour.png",
+  backgroundMinute: "images/standard/background_minute.png",
+  backgroundSecond: "images/standard/background_second.png",
 
-  fullTimeMachine: true, // Para controlar si se muestra el fondo completo del Time Machine
+  fullTimeMachine: false, // Para controlar si se muestra el fondo completo del Time Machine
 
   //backgroundDial: "images/standard/dial.png",
   //modeButton: "images/standard/mode_button.png",
@@ -21,11 +25,13 @@ export const DEFAULT_APP_SETTINGS = {
   imageLightOff: "images/standard/light_off.png",
   imageLightNok: "images/standard/light_nok.png",
   imageLightOk: "images/standard/light_ok.png",
-  soundBeep: "sounds/beep.mp3",
+
+  soundFlip: "sounds/flip_sound.wav",
   soundNok: "sounds/solution_nok.mp3",
   soundOk: "sounds/solution_ok.mp3",
+  soundSwitch: "sounds/switch_sound.mp3",
 
-  soundAfterSolve: "sounds/after_solve.mp3",
+ 
 
   dialWidth: 0.7, // Relative size of the dial compared to the box width
   dialHeight: 0.7, // Relative size of the dial compared to the box height
@@ -46,7 +52,12 @@ export const DEFAULT_APP_SETTINGS = {
   screenContainerHeight: 0.543, // Height of the screen container
   screenContainerMarginTop: -0.256, // Margin from the top of the box to the screen container in percentage of box height
 
-
+  minFrequency: 0.4, // Minimum frequency for the ray
+  maxFrequency: 0.5, // Maximum frequency for the ray
+  minAmplitude: 20, // Minimum amplitude for the ray
+  maxAmplitude: 80, // Maximum amplitude for the ray
+  minWavelength: 50, // Minimum wavelength for the ray
+  maxWavelength: 80, // Maximum wavelength for the ray
 };
 
 export const SKIN_SETTINGS_RETRO = {
