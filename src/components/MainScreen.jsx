@@ -51,9 +51,10 @@ const MainScreen = (props) => {
   const [second1, setSecond1] = useState(0);
 
   // Estados para el carrusel de texto
-  const [textPosition, setTextPosition] = useState(0); // 0 = texto1 visible, 100 = texto2 visible
+  const [textPosition, setTextPosition] = useState(0); 
   const [isAnimating, setIsAnimating] = useState(false);
 
+  const [wormholeActive, setWormholeActive] = useState(false);
 
   useEffect(() => {
     handleResize();
@@ -143,6 +144,20 @@ const MainScreen = (props) => {
     setIsAnimating(true);
     setTextPosition(100); // Muestra texto2
     setTimeout(() => setIsAnimating(false), 500); // Duración de la animación
+  };
+
+  const changeBackground = () => {
+    setWormholeActive(true); // Inicia animación
+    
+    // Después de 4 segundos (mitad de la animación), cambia el fondo
+    setTimeout(() => {
+      setBackgroundChange(true);
+    }, 4000);
+    
+    // Después de 8 segundos, termina el efecto
+    setTimeout(() => {
+      setWormholeActive(false);
+    }, 8000);
   };
 
   const checkSolution = () => {
@@ -270,9 +285,10 @@ const MainScreen = (props) => {
   }
 
   return (
-    <div id="screen_main" className={"screen_content"} style={{ backgroundImage: backgroundChange ? 'url("' + appSettings.backgroundAfter + '")' : 'url("' + appSettings.backgroundBefore + '")' }}>
-      <div className='lockContainer' style={{zIndex: 1, position: "absolute", backgroundImage: `url(${appSettings.backgroundRay})`, width: containerWidth*0.2, height: containerHeight*0.2, top: "49.7%", left: "27.3%"}}/>     
-        <div className="lockContainer" style={{zIndex:2,backgroundImage: appSettings.fullTimeMachine ? 'url('+appSettings.backgroundTimeMachineFull+')' : 'url('+appSettings.backgroundTimeMachine+')', width: containerWidth, height: containerHeight, position: "relative"}}>  
+    
+    <div id="screen_main" className={"screen_content"} style={{ backgroundImage: backgroundChange ? 'url("' + appSettings.backgroundAfter + '")' : 'url("' + appSettings.backgroundBefore + '")' }}>   
+      <div className={`wormhole ${wormholeActive ? 'active' : ''}`}/>
+        <div className={`timeMachineContainer ${wormholeActive ? 'active' : ''}`} style={{zIndex:2,backgroundImage: appSettings.fullTimeMachine ? 'url('+appSettings.backgroundTimeMachineFull+')' : 'url('+appSettings.backgroundTimeMachine+')', width: containerWidth, height: containerHeight, position: "relative"}}>  
           {/*Year*/}     
            <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.2, height: containerHeight*0.1, top: containerHeight*0.2, left: containerWidth*0.24, gap: containerWidth*0.006 + "px"}}>            
             <Digit name={"year0"} checking={processingSolution} style={yearStyle} digit={year0} setDigit={setYear0} max={9} digitOnClick={digitOnClick} isReset={isReset} />
@@ -282,35 +298,41 @@ const MainScreen = (props) => {
             <Digit name={"year4"} checking={processingSolution} style={yearStyle} digit={year4} setDigit={setYear4} max={9} digitOnClick={digitOnClick} isReset={isReset} />
           </div>
           <p className="tittle-text" style={{position:"absolute", left:"33.2%", top:"13.2%", color:"black", fontSize: containerHeight*0.03 + "px", textAlign:"center", transform: "translateX(-50%)"}}>{I18n.getTrans("i.year")}</p>
+          {/*Month*/}
           <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.1, height: containerHeight*0.1, top: containerHeight*0.2, left: containerWidth*0.525, gap: containerWidth*0.006 + "px"}}>            
             <Digit name={"month0"} checking={processingSolution}  style={monthStyle} digit={month0} setDigit={setMonth0} max={1} digitOnClick={digitOnClick} isReset={isReset} />
             <Digit name={"month1"} digit0={month0} checking={processingSolution} style={monthStyle} digit={month1} setDigit={setMonth1} max={9} digitOnClick={digitOnClick} isReset={isReset} />
           </div>
           <p className="tittle-text" style={{position:"absolute", left:"57.5%", top:"13.2%", color:"black", fontSize: containerHeight*0.03 + "px", textAlign:"center", transform: "translateX(-50%)"}}>{I18n.getTrans("i.month")}</p>
+          {/*Day*/}
           <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.1, height: containerHeight*0.1, top: containerHeight*0.2, left: containerWidth*0.678, gap: containerWidth*0.006 + "px"}}>            
             <Digit name={"day0"} checking={processingSolution} style={dayStyle} digit={day0} setDigit={setDay0} max={3} digitOnClick={digitOnClick} isReset={isReset} />
             <Digit name={"day1"} digit0={day0}  checking={processingSolution}  style={dayStyle} digit={day1} setDigit={setDay1} max={9} digitOnClick={digitOnClick} isReset={isReset} />
           </div>
           <p className="tittle-text" style={{position:"absolute", left:"72.5%", top:"13.2%", color:"black", fontSize: containerHeight*0.03 + "px", textAlign:"center", transform: "translateX(-50%)"}}>{I18n.getTrans("i.day")}</p>
+          {/*Hour*/}
           <div className='lockContainer' style={{zIndex: 2, position: "absolute", backgroundImage: `url(${appSettings.backgroundHour})`, width: containerWidth*0.15, height: containerHeight*0.15, top: "31.9%", left: "34.9%"}}/>
           <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.1, height: containerHeight*0.1, top: containerHeight*0.3275, left: containerWidth*0.375, gap: containerWidth*0.006 + "px"}}>            
             <Digit name={"hour0"} checking={processingSolution} style={hourStyle} digit={hour0} setDigit={setHour0} max={5} digitOnClick={digitOnClick} isReset={isReset} />
             <Digit name={"hour1"} checking={processingSolution} style={hourStyle} digit={hour1} setDigit={setHour1} max={9} digitOnClick={digitOnClick} isReset={isReset} />
           </div>
           <p className="tittle-text" style={{zIndex:3,position:"absolute", left:"42.4%", top:"39.7%", color:"black", fontSize: containerHeight*0.03 + "px", textAlign:"center", transform: "translateX(-50%)"}}>{I18n.getTrans("i.hour")}</p>
+          {/*Minute*/}
           <div className='lockContainer' style={{zIndex: 2, position: "absolute", backgroundImage: `url(${appSettings.backgroundMinute})`, width: containerWidth*0.15, height: containerHeight*0.15, top: "32%", left: "50%"}}/>
           <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.1, height: containerHeight*0.1, top: containerHeight*0.3275, left: containerWidth*0.525, gap: containerWidth*0.006 + "px"}}>            
             <Digit name={"minute0"} checking={processingSolution} style={minuteStyle} digit={minute0} setDigit={setMinute0} max={5} digitOnClick={digitOnClick} isReset={isReset}/>
             <Digit name={"minute1"} checking={processingSolution} style={minuteStyle} digit={minute1} setDigit={setMinute1} max={9} digitOnClick={digitOnClick} isReset={isReset}/>
           </div>
           <p className="tittle-text" style={{zIndex:3,position:"absolute", left:"57.4%", top:"39.7%", color:"black", fontSize: containerHeight*0.03 + "px", textAlign:"center", transform: "translateX(-50%)"}}>{I18n.getTrans("i.minute")}</p>
+          {/*Second*/}
           <div className='lockContainer' style={{zIndex: 2, position: "absolute", backgroundImage: `url(${appSettings.backgroundSecond})`, width: containerWidth*0.15, height: containerHeight*0.15, top: "32.1%", left: "64.9%"}}/>
           <div style={{zIndex:3,position: "absolute",display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width: containerWidth*0.1, height: containerHeight*0.1, top: containerHeight*0.3275, left: containerWidth*0.675, gap: containerWidth*0.006 + "px"}}>            
             <Digit name={"second0"} checking={processingSolution}  style={secondStyle} digit={second0} setDigit={setSecond0} max={5} digitOnClick={digitOnClick} isReset={isReset} />
             <Digit name={"second1"} checking={processingSolution}  style={secondStyle} digit={second1} setDigit={setSecond1} max={9} digitOnClick={digitOnClick} isReset={isReset} />
           </div>
           <p className="tittle-text" style={{zIndex:3,position:"absolute", left:"72.4%", top:"39.5%", color:"black", fontSize: containerHeight*0.03 + "px", textAlign:"center", transform: "translateX(-50%)"}}>{I18n.getTrans("i.second")}</p>
-          <div className='switchContainer' onClick={checkSolution} style={{zIndex:5,position: "absolute", backgroundImage: `url(${appSettings.switchImage})`, width: lightWidth, height: lightHeight, top: "63%", left:"43.9%", cursor: "pointer"}}/>
+
+          <div className='switchContainer' onClick={changeBackground} style={{zIndex:5,position: "absolute", backgroundImage: `url(${appSettings.switchImage})`, width: lightWidth, height: lightHeight, top: "63%", left:"43.9%", cursor: "pointer"}}/>
           
           {/* AC BC */}
           <div style={{zIndex: 2, position: "absolute", width: containerWidth*0.09, height: containerHeight*0.045, top:"33.9%", left: "22.9%", backgroundColor: "#f0d0a2"}}>
@@ -323,10 +345,10 @@ const MainScreen = (props) => {
           </div>          
           {/* Botones AC BC */}
           <div className='lockContainer' style={{zIndex: 2, position: "absolute", backgroundImage: `url(${appSettings.acbcBackground})`, width: containerWidth*0.15, height: containerHeight*0.15, top: "31.5%", left: "20.4%"}}/>
-          <div className='buttonContainer' onClick={moveTextUp} style={{display: "flex", alignItems:"center", justifyContent:"center", zIndex: 2, position: "absolute", backgroundImage: `url(${appSettings.buttonBackground})`, width: containerWidth*0.05, height: containerHeight*0.05, top: "39.7%", left: "22.8%"}}>
+          <div className={`buttonContainer ${textPosition===0 && 'disabled'}`} onClick={textPosition===0 ? null : moveTextUp} style={{display: "flex", alignItems:"center", justifyContent:"center", zIndex: 2, position: "absolute", backgroundImage: `url(${appSettings.buttonBackground})`, width: containerWidth*0.05, height: containerHeight*0.05, top: "39.7%", left: "22.8%"}}>
             <svg xmlns="http://www.w3.org/2000/svg" height="5vmin" viewBox="0 -960 960 960" width="5vmin" fill="#FFFFFF"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
           </div>
-          <div className='buttonContainer' onClick={moveTextDown} style={{display: "flex", alignItems:"center", justifyContent:"center", zIndex: 2, position: "absolute", backgroundImage: `url(${appSettings.buttonBackground})`, width: containerWidth*0.05, height: containerHeight*0.05, top: "39.7%", left: "27.6%"}}>
+          <div className={`buttonContainer ${textPosition===100 && 'disabled'}`} onClick={textPosition===100 ? null : moveTextDown} style={{display: "flex", alignItems:"center", justifyContent:"center", zIndex: 2, position: "absolute", backgroundImage: `url(${appSettings.buttonBackground})`, width: containerWidth*0.05, height: containerHeight*0.05, top: "39.7%", left: "27.6%"}}>
             <svg xmlns="http://www.w3.org/2000/svg" height="5vmin" viewBox="0 -960 960 960" width="5vmin" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
           </div>
           
@@ -368,6 +390,15 @@ const MainScreen = (props) => {
               multipleRays={true} rayCount={2} color="#078fffff" strokeWidth={1.2}
               segments={15} glowEffect={true} animated={true} flickerIntensity={0.8} intensity={0.9} />         
           </div>
+
+          {/*wormholeActive &&<div style={{zIndex:6,position:"absolute", left:containerWidth*0.05, top:containerHeight*-0.05}}>
+            <Electricity width={containerWidth*0.8} height={containerHeight*0.6}
+              startPoint={{ x: (containerWidth*0.1), y: containerHeight*0.1 }}
+              endPoint={{ x: (containerWidth*0.9), y: containerHeight*0.1 }}
+              animationSpeed={120} branches={3} maxBranches={9} branchLength={0.2}
+              multipleRays={true} rayCount={5} color="#fffed9ff" strokeWidth={1.3}
+              segments={20} glowEffect={true} animated={true} flickerIntensity={0.9} intensity={1} />         
+          </div>*/}
   
       </div>
         
